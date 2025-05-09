@@ -477,25 +477,59 @@
     wrap.innerHTML = html;
     document.body.appendChild(wrap.firstElementChild);
 
-    // — 4. Typewrite ve click handler’ları başlat —
-    function initWidget(){
+    function setupClick(){
         $(".customer-services").on("click", function(){
             $(this).toggleClass("active");
         });
-        // typewrite kütüphaneniz…
-        // window.onload veya hemen başlatabilirsiniz:
-        var elements = document.getElementsByClassName("typewrite");
-        for (var i = 0; i < elements.length; i++) {
-            var toRotate = elements[i].getAttribute("data-type");
-            var period = elements[i].getAttribute("data-period");
-            if (toRotate) new TxtType(elements[i], JSON.parse(toRotate), period);
+    }
+
+    // (b) Typewriter sınıfı
+    var TxtType = function(el, toRotate, period){
+        this.toRotate = toRotate;
+        this.el = el;
+        this.loopNum = 0;
+        this.period = parseInt(period,10) || 2000;
+        this.txt = '';
+        this.isDeleting = false;
+        this.tick();
+    };
+    TxtType.prototype.tick = function(){
+        var i = this.loopNum % this.toRotate.length;
+        var fullTxt = this.toRotate[i];
+        this.txt = this.isDeleting
+            ? fullTxt.substring(0, this.txt.length-1)
+            : fullTxt.substring(0, this.txt.length+1);
+
+        this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
+
+        var delta = 200 - Math.random()*100;
+        if(this.isDeleting) { delta /= 2; }
+        if(!this.isDeleting && this.txt === fullTxt){
+            delta = this.period;
+            this.isDeleting = true;
+        } else if(this.isDeleting && this.txt === ''){
+            this.isDeleting = false;
+            this.loopNum++;
+            delta = 500;
+        }
+        setTimeout(function(){ this.tick(); }.bind(this), delta);
+    };
+
+    function setupTypewriter(){
+        var elements = document.getElementsByClassName('typewrite');
+        for(var i=0;i<elements.length;i++){
+            var toRotate = elements[i].getAttribute('data-type');
+            var period   = elements[i].getAttribute('data-period');
+            if(toRotate){
+                new TxtType(elements[i], JSON.parse(toRotate), period);
+            }
         }
     }
 
-    // jQuery hazır olduğunda widget’i başlat
-    function whenReady(fn){
-        if (window.jQuery) return fn();
-        document.querySelector('script[src*="jquery"]').onload = fn;
-    }
-    whenReady(initWidget);
+    // —— 5) jQuery hazır olunca tüm setup’ları çalıştır ——
+    loadjQuery(function(){
+        setupClick();
+        setupTypewriter();
+    });
+
 })();
