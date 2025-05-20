@@ -179,7 +179,7 @@
   }
   .customer-services ul {
     position: fixed;
-    bottom: 0;
+    bottom: 50px;
     left: 0;
     width: 100%;
     padding: 1rem;
@@ -197,7 +197,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      bottom: 100px;
+      bottom: auto;
       width: 100%;
       height: 100%;
       padding: 0;
