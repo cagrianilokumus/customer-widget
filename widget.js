@@ -30,7 +30,8 @@
 
   @media (max-width: 576px) {
     .customer-services{
-      margin-bottom: 3rem;
+      margin-bottom: 5rem;
+      margin-right: 1rem;
     }
   }
 
